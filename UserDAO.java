@@ -74,7 +74,7 @@ public class UserDAO {
     	connect_func();         
     	
     	//Quary to see if the username is already existing
-    	String sql = "SELECT * form user WHERE username = ?";
+    	String sql = "SELECT * FROM user WHERE username = ?";
     	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
     	preparedStatement.setString(1, user.userName);
     	ResultSet resultSet = statement.executeQuery(sql);
@@ -157,7 +157,7 @@ public class UserDAO {
     
     public boolean checkUserName(String userName)throws SQLException {
     	connect_func();
-    	String sql = "SELECT * form user WHERE username = ?";
+    	String sql = "SELECT * FROM user WHERE username = ?";
     	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
     	preparedStatement.setString(1, userName);
     	ResultSet resultSet = statement.executeQuery(sql);
@@ -172,7 +172,7 @@ public class UserDAO {
     
     public boolean checkUser(String username,String password)throws SQLException {
     	connect_func();
-    	String sql = "SELECT * form user WHERE username =? AND password = ?";
+    	String sql = "SELECT * FROM user WHERE username =? AND password = ?";
     	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
     	preparedStatement.setString(1, username);
     	preparedStatement.setString(2, password);
