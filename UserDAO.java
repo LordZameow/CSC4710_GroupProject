@@ -119,19 +119,19 @@ public class UserDAO {
     	String sql = "SELECT * FROM user WHERE username = ?";
     	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
     	preparedStatement.setString(1, user.userName);
-    	ResultSet resultSet = statement.executeQuery(sql);
-    	
+    	ResultSet resultSet = preparedStatement.executeQuery();
     	if (resultSet.next()) {//returns false if the username already exists 
     		return false;
     	}
     	else {
-			String sq2 = "insert into  User(userName, password, firstName, lastName, age) values (?, ?, ?, ?,?)";
+			String sq2 = "insert into  User(userName, password, age, firstName, lastName) values (?, ?, ?, ?,?)";
+			System.out.println(user.getLastName());
 			preparedStatement = (PreparedStatement) connect.prepareStatement(sq2);
 			preparedStatement.setString(1, user.userName);
-			preparedStatement.setString(2, user.password);
-			preparedStatement.setString(3, user.firstName);
-			preparedStatement.setString(3, user.lastName);
+			preparedStatement.setString(2, user.lastName);
 			preparedStatement.setInt(3, user.age);
+			preparedStatement.setString(4, user.firstName);
+			preparedStatement.setString(5, user.password);
 		//		preparedStatement.executeUpdate();
 			
 		    boolean rowInserted = preparedStatement.executeUpdate() > 0;
@@ -202,7 +202,7 @@ public class UserDAO {
     	String sql = "SELECT * FROM user WHERE username = ?";
     	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
     	preparedStatement.setString(1, userName);
-    	ResultSet resultSet = statement.executeQuery(sql);
+    	ResultSet resultSet = preparedStatement.executeQuery();
     	
     	if (resultSet.next()) {//returns false if the username already exists 
     		return false;
@@ -214,17 +214,17 @@ public class UserDAO {
     
     public boolean checkUser(String username,String password)throws SQLException {
     	connect_func();
-    	String sql = "SELECT * FROM user WHERE username =? AND password = ?";
+    	String sql = "SELECT * FROM user WHERE username = ? AND password = ?";
     	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
     	preparedStatement.setString(1, username);
     	preparedStatement.setString(2, password);
-    	ResultSet resultSet = statement.executeQuery(sql);
+    	ResultSet resultSet = preparedStatement.executeQuery();
     	
-    	if (resultSet.next()) {//returns false if the username already exists 
-    		return false;
+    	if (resultSet.next()) {
+    		return true;
     	}
     	else {
-    		return true;
+    		return false;
     	}
     }
     

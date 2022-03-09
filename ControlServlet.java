@@ -87,9 +87,18 @@ public class ControlServlet extends HttpServlet {
             	System.out.println("The action is: show register form");
             	showRegister(request,response);
             	break;
+            case "/userLogin":
+            	System.out.println("The action is: user login");
+            	if(userLogin(request,response)) {
+            		System.out.println("Successfully logged in");
+            	}
+            	else {
+            		System.out.println("Incorrect username or password");
+            	}
+            	break;
             default:
                 System.out.println("Not sure which action, we will treat it as the list action");
-                listPeople(request, response);           	
+                showUserLogin(request, response);           	
                 break;
             }
         } catch (SQLException ex) {
@@ -111,24 +120,24 @@ public class ControlServlet extends HttpServlet {
     
     private void showRegister(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        System.out.println("userRegister started: 000000000000000000000000000");
+        System.out.println("UserRegister started: 000000000000000000000000000");
      
-        RequestDispatcher dispatcher = request.getRequestDispatcher("userRegister.jsp");
+        RequestDispatcher dispatcher = request.getRequestDispatcher("UserRegister.jsp");
         dispatcher.forward(request, response);
-        System.out.println("The user sees the InitializeDatabase page now.");
+        System.out.println("The user sees the UserRegister page now.");
      
-        System.out.println("userRegister finished: 1111111111111111111111111111111");
+        System.out.println("UserRegister finished: 1111111111111111111111111111111");
     }
     
     private void showUserLogin(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        System.out.println("userLogin started: 000000000000000000000000000");
+        System.out.println("UserLogin started: 000000000000000000000000000");
      
         RequestDispatcher dispatcher = request.getRequestDispatcher("UserLogin.jsp");
         dispatcher.forward(request, response);
-        System.out.println("The user sees the InitializeDatabase page now.");
+        System.out.println("The user sees the UserLogin page now.");
      
-        System.out.println("userLogin finished: 1111111111111111111111111111111");
+        System.out.println("UserLogin finished: 1111111111111111111111111111111");
     }
     
     private void listPeople(HttpServletRequest request, HttpServletResponse response)
@@ -189,22 +198,39 @@ public class ControlServlet extends HttpServlet {
 	    
 	    String userName = request.getParameter("username");
 	    String password = request.getParameter("password");
+	    String confirmPassword = request.getParameter("confirmPassword");
 	    String firstName = request.getParameter("firstname");
 	    String lastName = request.getParameter("lastname");
 	    String age = request.getParameter("age");
-	    System.out.println("uasername:" + userName + ", password: "+password + ", firstname: " + firstName + ", lastname: " + lastName+ ", age: " + age);
+	    System.out.println("username:" + userName + ", password: "+password + ", firstname: " + firstName + ", lastname: " + lastName+ ", age: " + age);
 	    
 	    int ageInt = Integer.valueOf(age);
-	 
+	    if(!password.equals(confirmPassword))
+	    	{
+	    	response.sendRedirect("register");
+	    	return;
+	    	}
+	    
 	    User newUser = new User(userName,password,firstName,lastName,ageInt);
 	    userDAO.insert(newUser);
 	 
 	    System.out.println("Ask the browser to call the list action next automatically");
-	    response.sendRedirect("list");  //
+	    response.sendRedirect("UserLogin");  //
 	 
-	    System.out.println("insertPeople finished: 11111111111111111111111111");   
+	    System.out.println("insertPeople finished: 11111111111111111111111111");
     }
  
+    private boolean userLogin(HttpServletRequest request, HttpServletResponse response)
+    		throws SQLException, IOException {
+	    System.out.println("userLogin started: 000000000000000000000000000");
+	    
+	    
+	    String username=request.getParameter("username");
+	    String password=request.getParameter("password");
+	    return userDAO.checkUser(username,password);
+
+    }
+    
     private void updatePeople(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException {
         System.out.println("updatePeople started: 000000000000000000000000000");
