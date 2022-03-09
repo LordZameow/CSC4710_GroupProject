@@ -59,7 +59,7 @@ public class ControlServlet extends HttpServlet {
                 break;
             case "/insert":
                 System.out.println("The action is: insert");
-            	   insertPeople(request, response);
+            	   insertUser(request, response);
                 break;
             case "/delete":
                 System.out.println("The action is: delete");
@@ -183,22 +183,26 @@ public class ControlServlet extends HttpServlet {
     
     // after the data of a people are inserted, this method will be called to insert the new people into the DB
     // 
-    private void insertPeople(HttpServletRequest request, HttpServletResponse response)
-            throws SQLException, IOException {
-        System.out.println("insertPeople started: 000000000000000000000000000");
-     
-        String name = request.getParameter("name");
-        String address = request.getParameter("address");
-        String status = request.getParameter("status");
-        System.out.println("name:" + name + ", address: "+address + ", status:" + status);
-     
-        People newPeople = new People(name, address, status);
-        peopleDAO.insert(newPeople);
-     
-        System.out.println("Ask the browser to call the list action next automatically");
-        response.sendRedirect("list");  //
-     
-        System.out.println("insertPeople finished: 11111111111111111111111111");   
+    private void insertUser(HttpServletRequest request, HttpServletResponse response)
+    		throws SQLException, IOException {
+	    System.out.println("insertPeople started: 000000000000000000000000000");
+	    
+	    String userName = request.getParameter("username");
+	    String password = request.getParameter("password");
+	    String firstName = request.getParameter("firstname");
+	    String lastName = request.getParameter("lastname");
+	    String age = request.getParameter("age");
+	    System.out.println("uasername:" + userName + ", password: "+password + ", firstname: " + firstName + ", lastname: " + lastName+ ", age: " + age);
+	    
+	    int ageInt = Integer.valueOf(age);
+	 
+	    User newUser = new User(userName,password,firstName,lastName,ageInt);
+	    userDAO.insert(newUser);
+	 
+	    System.out.println("Ask the browser to call the list action next automatically");
+	    response.sendRedirect("list");  //
+	 
+	    System.out.println("insertPeople finished: 11111111111111111111111111");   
     }
  
     private void updatePeople(HttpServletRequest request, HttpServletResponse response)
