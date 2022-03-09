@@ -35,9 +35,49 @@ public class UserDAO {
             }
             connect = (Connection) DriverManager
   			      .getConnection("jdbc:mysql://127.0.0.1:3306/testdb?"
-  			          + "useSSL=false&user=john&password=pass1234");
+  			          + "useSSL=false&user=Fran&password=2489823172aA");
             System.out.println(connect);
         }
+    }
+    
+    public void initialize() throws SQLException{
+    	
+    	String delData="DELETE from user";
+    	connect_func();      
+    	preparedStatement = (PreparedStatement) connect.prepareStatement(delData);
+    	statement=connect.createStatement();
+    	statement.executeUpdate(delData);
+         
+    	String insert1 = "insert into  user(userName, password, firstName, lastName, age) values "
+    			+ "(\"nighthawk@verizon.net\", \"passOne\", \"Michael\", \"Smith\",\"20\")";
+    	String insert2 = "insert into  user(userName, password, firstName, lastName, age) values "
+    			+ "(\"lydia@outlook.com\", \"passTwo\", \"Christopher\", \"Johnson\",\"21\")";
+    	String insert3 = "insert into  user(userName, password, firstName, lastName, age) values "
+    			+ "(\"sabren@comcast.net\", \"passThree\", \"Jessica\", \"Williams\",\"22\")";
+    	String insert4 = "insert into  user(userName, password, firstName, lastName, age) values "
+    			+ "(\"bulletin@me.com\", \"passFour\", \"Matthew\", \"Jones\",\"23\")";
+    	String insert5 = "insert into  user(userName, password, firstName, lastName, age) values "
+    			+ "(\"mhanoh@outlook.com\", \"passFive\", \"Ashley\", \"Brown\",\"24\")";
+    	String insert6 = "insert into  user(userName, password, firstName, lastName, age) values "
+    			+ "(\"smpeters@comcast.net\", \"passSix\", \"Jennifer\", \"Davis\",\"25\")";
+    	String insert7 = "insert into  user(userName, password, firstName, lastName, age) values "
+    			+ "(\"mcraigw@live.com\", \"passSeven\", \"Joshua\", \"Miller\",\"26\")";
+    	String insert8 = "insert into  user(userName, password, firstName, lastName, age) values "
+    			+ "(\"wenzlaff@comcast.net\", \"passEight\", \"Amanda\", \"Wilson\",\"27\")";
+    	String insert9 = "insert into  user(userName, password, firstName, lastName, age) values "
+    			+ "(\"jimmichie@aol.com\", \"passNine\", \"Daniel\", \"Moore\",\"28\")";
+    	String insert10 = "insert into  user(userName, password, firstName, lastName, age) values "
+    			+ "(\"kjohnson@outlook.com\", \"passTen\", \"David\", \"Taylor\",\"29\")";
+		statement.executeUpdate(insert1);
+		statement.executeUpdate(insert2);
+		statement.executeUpdate(insert3);
+		statement.executeUpdate(insert4);
+		statement.executeUpdate(insert5);
+		statement.executeUpdate(insert6);
+		statement.executeUpdate(insert7);
+		statement.executeUpdate(insert8);
+		statement.executeUpdate(insert9);
+		statement.executeUpdate(insert10);
     }
     
     public List<User> listAllUser() throws SQLException {
@@ -69,6 +109,8 @@ public class UserDAO {
         	connect.close();
         }
     }
+    
+    
     
     public boolean insert(User user) throws SQLException {
     	connect_func();         

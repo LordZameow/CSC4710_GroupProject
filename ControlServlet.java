@@ -26,10 +26,12 @@ public class ControlServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private PeopleDAO peopleDAO;
     private rootDAO rootDAO;
+    private UserDAO userDAO;
  
     public void init() {
         peopleDAO = new PeopleDAO();
         rootDAO=new rootDAO();
+        userDAO=new UserDAO();
     }
  
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -73,13 +75,17 @@ public class ControlServlet extends HttpServlet {
                 break;
             case "/rootLogin":
             	System.out.println("The action is root login");
-            	//while(!rootLogin(request,response)) {}
-            	if(!rootLogin(request,response))
-            		response.sendRedirect("list");
+            	while(!rootLogin(request,response)) {}
             	showInitializeDatabase(request,response);
             	break;
-            case "/intializeDatabase":
+            case "/initializeDatabase":
             	System.out.println("The action is initialize database");
+            	userDAO.initialize();
+            	showUserLogin(request,response);
+            	break;
+            case "/register":
+            	System.out.println("The action is: show register form");
+            	showRegister(request,response);
             	break;
             default:
                 System.out.println("Not sure which action, we will treat it as the list action");
@@ -101,6 +107,28 @@ public class ControlServlet extends HttpServlet {
         System.out.println("The user sees the InitializeDatabase page now.");
      
         System.out.println("showInitializeDatabase finished: 1111111111111111111111111111111");
+    }
+    
+    private void showRegister(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        System.out.println("userRegister started: 000000000000000000000000000");
+     
+        RequestDispatcher dispatcher = request.getRequestDispatcher("userRegister.jsp");
+        dispatcher.forward(request, response);
+        System.out.println("The user sees the InitializeDatabase page now.");
+     
+        System.out.println("userRegister finished: 1111111111111111111111111111111");
+    }
+    
+    private void showUserLogin(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        System.out.println("userLogin started: 000000000000000000000000000");
+     
+        RequestDispatcher dispatcher = request.getRequestDispatcher("UserLogin.jsp");
+        dispatcher.forward(request, response);
+        System.out.println("The user sees the InitializeDatabase page now.");
+     
+        System.out.println("userLogin finished: 1111111111111111111111111111111");
     }
     
     private void listPeople(HttpServletRequest request, HttpServletResponse response)
@@ -150,7 +178,6 @@ public class ControlServlet extends HttpServlet {
     	root ROOT=new root();
     	root attempt=new root(username,password);
     	System.out.println("ROOT: "+ROOT.username+" "+ROOT.password+" ; Attempt: "+attempt.username+" "+attempt.password);
-    	response.sendRedirect("list");
     	return rootDAO.isRoot(ROOT,attempt);
     }
     
