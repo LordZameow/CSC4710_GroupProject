@@ -15,16 +15,15 @@ public User(String userName,String password) {
 }
 
 public User(String userName,String password, String firstName, String lastName,int age) {
-	this(firstName,lastName, password, age);
-	this.userName = userName;
-}
 
-public User(String firstName,String password,String lastName, int age) {
+	this.userName = userName;
+	this.password = password;
 	this.firstName = firstName;
 	this.lastName = lastName;
-	this.password = password;
 	this.age = age;
 }
+
+
 
 public int getAge() {
 	return age;
