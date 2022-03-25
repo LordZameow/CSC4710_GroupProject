@@ -91,8 +91,8 @@ public class UserDAO {
             String userName = resultSet.getString("username");
             String password = resultSet.getString("password");
             int age = resultSet.getInt("age");
-            String firstName = resultSet.getString("firstname");
-            String lastName = resultSet.getString("lastname");
+            String firstName = resultSet.getString("firstName");
+            String lastName = resultSet.getString("lastName");
 
              
             User user = new User(userName,password, firstName, lastName, age);
@@ -115,7 +115,7 @@ public class UserDAO {
     public boolean insert(User user) throws SQLException {
     	connect_func();         
     	
-    	//Quary to see if the username is already existing
+    	//Query to see if the username is already existing
     	String sql = "SELECT * FROM user WHERE username = ?";
     	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
     	preparedStatement.setString(1, user.userName);
@@ -124,14 +124,14 @@ public class UserDAO {
     		return false;
     	}
     	else {
+    		System.out.println("Last Name: "+ user.lastName+ "Password: "+user.password);
 			String sq2 = "insert into  User(userName, password, age, firstName, lastName) values (?, ?, ?, ?,?)";
-			System.out.println(user.getLastName());
 			preparedStatement = (PreparedStatement) connect.prepareStatement(sq2);
 			preparedStatement.setString(1, user.userName);
-			preparedStatement.setString(2, user.lastName);
+			preparedStatement.setString(2, user.password);
 			preparedStatement.setInt(3, user.age);
 			preparedStatement.setString(4, user.firstName);
-			preparedStatement.setString(5, user.password);
+			preparedStatement.setString(5, user.lastName);
 		//		preparedStatement.executeUpdate();
 			
 		    boolean rowInserted = preparedStatement.executeUpdate() > 0;

@@ -53,10 +53,18 @@ public class ControlServlet extends HttpServlet {
                 System.out.println("The action is: list");
                 listPeople(request, response);           	
                 break;
+            case "listUsers":
+            	System.out.println("The action is: list users");
+            	listUsers(request,response);
+            	break;
             case "/new":
                 System.out.println("The action is: new");
                 showNewForm(request, response);
                 break;
+            case "/showUserLogin":
+            	System.out.println("The action is: show user login");
+            	showUserLogin(request,response);
+            	break;
             case "/insert":
                 System.out.println("The action is: insert");
             	   insertUser(request, response);
@@ -89,16 +97,11 @@ public class ControlServlet extends HttpServlet {
             	break;
             case "/userLogin":
             	System.out.println("The action is: user login");
-            	if(userLogin(request,response)) {
-            		System.out.println("Successfully logged in");
-            	}
-            	else {
-            		System.out.println("Incorrect username or password");
-            	}
+            	userLogin(request,response);
             	break;
             default:
                 System.out.println("Not sure which action, we will treat it as the list action");
-                showUserLogin(request, response);           	
+                listUsers(request, response);           	
                 break;
             }
         } catch (SQLException ex) {
@@ -131,7 +134,7 @@ public class ControlServlet extends HttpServlet {
     
     private void showUserLogin(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        System.out.println("UserLogin started: 000000000000000000000000000");
+        System.out.println("ShowUserLogin started: 000000000000000000000000000");
      
         RequestDispatcher dispatcher = request.getRequestDispatcher("UserLogin.jsp");
         dispatcher.forward(request, response);
@@ -151,6 +154,19 @@ public class ControlServlet extends HttpServlet {
         dispatcher.forward(request, response);
      
         System.out.println("listPeople finished: 111111111111111111111111111111111111");
+    }
+    
+    private void listUsers(HttpServletRequest request, HttpServletResponse response)
+            throws SQLException, IOException, ServletException {
+        System.out.println("listUsers started: 00000000000000000000000000000000000");
+
+     
+        List<User> listUser = userDAO.listAllUser();
+        request.setAttribute("listUsers", listUser);       
+        RequestDispatcher dispatcher = request.getRequestDispatcher("UsersList.jsp");       
+        dispatcher.forward(request, response);
+     
+        System.out.println("listUsers finished: 111111111111111111111111111111111111");
     }
  
     // to insert a people
@@ -220,14 +236,21 @@ public class ControlServlet extends HttpServlet {
 	    System.out.println("insertPeople finished: 11111111111111111111111111");
     }
  
-    private boolean userLogin(HttpServletRequest request, HttpServletResponse response)
+    private void userLogin(HttpServletRequest request, HttpServletResponse response)
     		throws SQLException, IOException {
 	    System.out.println("userLogin started: 000000000000000000000000000");
 	    
 	    
 	    String username=request.getParameter("username");
 	    String password=request.getParameter("password");
-	    return userDAO.checkUser(username,password);
+	    if(userDAO.checkUser(username,password)) {
+	    	response.sendRedirect("listUsers");
+	    	System.out.println("LOGGED IN");
+	    }
+	    else{
+	    	response.sendRedirect("showUserLogin");
+	    	System.out.println("NOT LOGGED IN");
+	    	}
 
     }
     
