@@ -168,6 +168,18 @@ public class ControlServlet extends HttpServlet {
      
         System.out.println("listUsers finished: 111111111111111111111111111111111111");
     }
+    
+    private void showUserProfile(HttpServletRequest request, HttpServletResponse response, String username)
+            throws SQLException, IOException, ServletException {
+        System.out.println("showUserProfile started: 00000000000000000000000000000000000");
+
+        List<User> userProfile = userDAO.getUser(username);
+        
+        request.setAttribute("profile", userProfile);       
+        RequestDispatcher dispatcher = request.getRequestDispatcher("UserProfile.jsp");       
+        dispatcher.forward(request, response);
+        
+    }
  
     // to insert a people
     private void showNewForm(HttpServletRequest request, HttpServletResponse response)
@@ -237,19 +249,17 @@ public class ControlServlet extends HttpServlet {
     }
  
     private void userLogin(HttpServletRequest request, HttpServletResponse response)
-    		throws SQLException, IOException {
+    		throws SQLException, IOException, ServletException {
 	    System.out.println("userLogin started: 000000000000000000000000000");
-	    
 	    
 	    String username=request.getParameter("username");
 	    String password=request.getParameter("password");
 	    if(userDAO.checkUser(username,password)) {
-	    	response.sendRedirect("listUsers");
-	    	System.out.println("LOGGED IN");
+	    	showUserProfile(request,response,username);
+	    	//response.sendRedirect("listUsers");
 	    }
 	    else{
 	    	response.sendRedirect("showUserLogin");
-	    	System.out.println("NOT LOGGED IN");
 	    	}
 
     }
