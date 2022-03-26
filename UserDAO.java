@@ -228,4 +228,61 @@ public class UserDAO {
     	}
     }
     
+    public boolean checkBalance(String username, float amount)throws SQLException{
+    	connect_func();
+    	String sql = "SELECT dollarBal FROM user WHERE username = ?";
+    	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+    	preparedStatement.setString(1, username);
+    	ResultSet resultSet = preparedStatement.executeQuery();
+    	
+    	if (resultSet.next()) {
+    		float userBal = resultSet.getFloat("dollarBal");
+    		if(userBal>amount) {
+    			return true;
+    		}
+    		else {
+    			return false;
+    		}
+    	}
+    	else {
+    		return false;
+    	}
+    }
+    
+    public boolean follow(String followee, String follower) throws SQLException{
+    	connect_func();
+    	String sql = "INSERT INTO follow(followeeUsername, followerUsername) VALUES (?,?)";
+    	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+    	preparedStatement.setString(1, followee);
+    	preparedStatement.setString(2, follower);
+    	
+    	return preparedStatement.executeUpdate() > 0;
+    }
+    
+    public boolean unfollow(String followee, String follower) throws SQLException{
+    	connect_func();
+    	String sql = "DELETE FROM follow WHERE followeeUsername = ? and followerUsername = ?";
+    	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+    	preparedStatement.setString(1, followee);
+    	preparedStatement.setString(2, follower);
+    	
+    	return preparedStatement.executeUpdate() > 0;
+    }
+    
+    public boolean isFollowing(String followee, String follower) throws SQLException{
+    	connect_func();
+    	String sql = "SELECT * FROM follow WHERE followeeUsername = ? and followerUsername = ?";
+    	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+    	preparedStatement.setString(1, followee);
+    	preparedStatement.setString(2, follower);
+    	ResultSet resultSet = preparedStatement.executeQuery();
+    	
+    	if (resultSet.next()) {
+    		return true;
+    	}
+    	else {
+    		return false;
+    	}
+    }
+    
 }
