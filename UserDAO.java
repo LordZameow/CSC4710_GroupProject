@@ -171,12 +171,12 @@ public class UserDAO {
         return rowUpdated;     
     }
     
-    public User getUser(String userName) throws SQLException {
+    public List<User> getUser(String userName) throws SQLException {
     	User user = null;
         String sql = "SELECT * FROM student WHERE username = ?";
          
         connect_func();
-         
+        List<User> listUser= new ArrayList<User>();
         preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
         preparedStatement.setString(1, userName);
          
@@ -190,11 +190,10 @@ public class UserDAO {
              
             user = new User(userName, password, firstName, lastName, age);
         }
-         
+        
+        listUser.add(user);
         resultSet.close();
-        statement.close();
-         
-        return user;
+        return listUser;
     }
     
     public boolean checkUserName(String userName)throws SQLException {
