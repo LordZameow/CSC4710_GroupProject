@@ -39,7 +39,8 @@ if(request.getParameter("listPeople") == null) { // we want to make sure that we
                 <th>First Name</th>
                 <th>Last Name</th>
                 <th>Age</th>
-                <th>Balance</th>
+                <th>Dollar Balance</th>
+                <th>PPswap Balance</th>
             </tr>
             <c:forEach var="user" items="${profile}">
                 <tr>
@@ -47,7 +48,10 @@ if(request.getParameter("listPeople") == null) { // we want to make sure that we
                     <td><c:out value="${user.firstName}" /></td>
                     <td><c:out value="${user.lastName}" /></td>
                     <td><c:out value="${user.age}" /></td>
-               <%-- 
+                    <td><c:out value="${user.dollarBal}" /></td>
+                    <td><c:out value="${user.ppsBal}" /></td>
+                    
+                      <%-- 
                     <td>
                         <a href="edit?id=<c:out value='${people.id}' />">Edit</a>
                         &nbsp;&nbsp;&nbsp;&nbsp;

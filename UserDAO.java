@@ -48,26 +48,26 @@ public class UserDAO {
     	statement=connect.createStatement();
     	statement.executeUpdate(delData);
          
-    	String insert1 = "insert into  user(userName, password, firstName, lastName, age) values "
-    			+ "(\"nighthawk@verizon.net\", \"passOne\", \"Michael\", \"Smith\",\"20\")";
-    	String insert2 = "insert into  user(userName, password, firstName, lastName, age) values "
-    			+ "(\"lydia@outlook.com\", \"passTwo\", \"Christopher\", \"Johnson\",\"21\")";
-    	String insert3 = "insert into  user(userName, password, firstName, lastName, age) values "
-    			+ "(\"sabren@comcast.net\", \"passThree\", \"Jessica\", \"Williams\",\"22\")";
-    	String insert4 = "insert into  user(userName, password, firstName, lastName, age) values "
-    			+ "(\"bulletin@me.com\", \"passFour\", \"Matthew\", \"Jones\",\"23\")";
-    	String insert5 = "insert into  user(userName, password, firstName, lastName, age) values "
-    			+ "(\"mhanoh@outlook.com\", \"passFive\", \"Ashley\", \"Brown\",\"24\")";
-    	String insert6 = "insert into  user(userName, password, firstName, lastName, age) values "
-    			+ "(\"smpeters@comcast.net\", \"passSix\", \"Jennifer\", \"Davis\",\"25\")";
-    	String insert7 = "insert into  user(userName, password, firstName, lastName, age) values "
-    			+ "(\"mcraigw@live.com\", \"passSeven\", \"Joshua\", \"Miller\",\"26\")";
-    	String insert8 = "insert into  user(userName, password, firstName, lastName, age) values "
-    			+ "(\"wenzlaff@comcast.net\", \"passEight\", \"Amanda\", \"Wilson\",\"27\")";
-    	String insert9 = "insert into  user(userName, password, firstName, lastName, age) values "
-    			+ "(\"jimmichie@aol.com\", \"passNine\", \"Daniel\", \"Moore\",\"28\")";
-    	String insert10 = "insert into  user(userName, password, firstName, lastName, age) values "
-    			+ "(\"kjohnson@outlook.com\", \"passTen\", \"David\", \"Taylor\",\"29\")";
+    	String insert1 = "insert into  user(userName, password, firstName, lastName, age, dollarBal, ppsBal) values "
+    			+ "(\"nighthawk@verizon.net\", \"passOne\", \"Michael\", \"Smith\",\"20\",\"1000\",\"50\")";
+    	String insert2 = "insert into  user(userName, password, firstName, lastName, age, dollarBal, ppsBal) values "
+    			+ "(\"lydia@outlook.com\", \"passTwo\", \"Christopher\", \"Johnson\",\"21\",\"1000\",\"50\")";
+    	String insert3 = "insert into  user(userName, password, firstName, lastName, age, dollarBal, ppsBal) values "
+    			+ "(\"sabren@comcast.net\", \"passThree\", \"Jessica\", \"Williams\",\"22\",\"1000\",\"50\")";
+    	String insert4 = "insert into  user(userName, password, firstName, lastName, age, dollarBal, ppsBal) values "
+    			+ "(\"bulletin@me.com\", \"passFour\", \"Matthew\", \"Jones\",\"23\",\"1000\",\"50\")";
+    	String insert5 = "insert into  user(userName, password, firstName, lastName, age, dollarBal, ppsBal) values "
+    			+ "(\"mhanoh@outlook.com\", \"passFive\", \"Ashley\", \"Brown\",\"24\",\"1000\",\"50\")";
+    	String insert6 = "insert into  user(userName, password, firstName, lastName, age, dollarBal, ppsBal) values "
+    			+ "(\"smpeters@comcast.net\", \"passSix\", \"Jennifer\", \"Davis\",\"25\",\"1000\",\"50\")";
+    	String insert7 = "insert into  user(userName, password, firstName, lastName, age, dollarBal, ppsBal) values "
+    			+ "(\"mcraigw@live.com\", \"passSeven\", \"Joshua\", \"Miller\",\"26\",\"1000\",\"50\")";
+    	String insert8 = "insert into  user(userName, password, firstName, lastName, age, dollarBal, ppsBal) values "
+    			+ "(\"wenzlaff@comcast.net\", \"passEight\", \"Amanda\", \"Wilson\",\"27\",\"1000\",\"50\")";
+    	String insert9 = "insert into  user(userName, password, firstName, lastName, age, dollarBal, ppsBal) values "
+    			+ "(\"jimmichie@aol.com\", \"passNine\", \"Daniel\", \"Moore\",\"28\",\"1000\",\"50\")";
+    	String insert10 = "insert into  user(userName, password, firstName, lastName, age, dollarBal, ppsBal) values "
+    			+ "(\"kjohnson@outlook.com\", \"passTen\", \"David\", \"Taylor\",\"29\",\"1000\",\"50\")";
 		statement.executeUpdate(insert1);
 		statement.executeUpdate(insert2);
 		statement.executeUpdate(insert3);
@@ -125,13 +125,15 @@ public class UserDAO {
     	}
     	else {
     		System.out.println("Last Name: "+ user.lastName+ "Password: "+user.password);
-			String sq2 = "insert into  User(userName, password, age, firstName, lastName) values (?, ?, ?, ?,?)";
+			String sq2 = "insert into  User(userName, password, age, firstName, lastName,dollarBal,ppsBal) values (?, ?, ?, ?,?,?,?)";
 			preparedStatement = (PreparedStatement) connect.prepareStatement(sq2);
 			preparedStatement.setString(1, user.userName);
 			preparedStatement.setString(2, user.password);
 			preparedStatement.setInt(3, user.age);
 			preparedStatement.setString(4, user.firstName);
 			preparedStatement.setString(5, user.lastName);
+			preparedStatement.setDouble(6, user.dollarBal);
+			preparedStatement.setDouble(7, user.ppsBal);
 		//		preparedStatement.executeUpdate();
 			
 		    boolean rowInserted = preparedStatement.executeUpdate() > 0;
@@ -173,24 +175,30 @@ public class UserDAO {
     
     public List<User> getUser(String userName) throws SQLException {
     	User user = null;
-        String sql = "SELECT * FROM student WHERE username = ?";
-         
+    	
+        String sql = "SELECT * FROM user WHERE username = ?";
         connect_func();
         List<User> listUser= new ArrayList<User>();
         preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
         preparedStatement.setString(1, userName);
-         
         ResultSet resultSet = preparedStatement.executeQuery();
-         
         if (resultSet.next()) {
         	String password = resultSet.getString("password");
             int age = resultSet.getInt("age");
             String firstName = resultSet.getString("firstname");
             String lastName = resultSet.getString("lastname");
+            double dollarBal=resultSet.getDouble("dollarBal");
+            double ppsBal=resultSet.getDouble("ppsBal");
              
-            user = new User(userName, password, firstName, lastName, age);
+            user = new User(userName, password, firstName, lastName, age, dollarBal, ppsBal);
         }
         
+        System.out.println(user.age);
+        System.out.println(user.firstName);
+        System.out.println(user.lastName);
+        System.out.println(user.dollarBal);
+        System.out.println(user.ppsBal);
+
         listUser.add(user);
         resultSet.close();
         return listUser;

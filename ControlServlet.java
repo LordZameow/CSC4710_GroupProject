@@ -172,7 +172,6 @@ public class ControlServlet extends HttpServlet {
     private void showUserProfile(HttpServletRequest request, HttpServletResponse response, String username)
             throws SQLException, IOException, ServletException {
         System.out.println("showUserProfile started: 00000000000000000000000000000000000");
-
         List<User> userProfile = userDAO.getUser(username);
         
         request.setAttribute("profile", userProfile);       
@@ -243,7 +242,7 @@ public class ControlServlet extends HttpServlet {
 	    userDAO.insert(newUser);
 	 
 	    System.out.println("Ask the browser to call the list action next automatically");
-	    response.sendRedirect("UserLogin");  //
+	    response.sendRedirect("showUserLogin");  //
 	 
 	    System.out.println("insertPeople finished: 11111111111111111111111111");
     }
