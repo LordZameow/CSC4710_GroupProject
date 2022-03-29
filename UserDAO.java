@@ -25,6 +25,7 @@ public class UserDAO {
 	
     /**
      * @see HttpServlet#HttpServlet()
+     * "useSSL=false&user=john&password=pass1234"
      */
     protected void connect_func() throws SQLException {
         if (connect == null || connect.isClosed()) {
@@ -35,7 +36,7 @@ public class UserDAO {
             }
             connect = (Connection) DriverManager
   			      .getConnection("jdbc:mysql://127.0.0.1:3306/testdb?"
-  			          + "useSSL=false&user=Fran&password=2489823172aA");
+  			          + "useSSL=false&user=john&password=pass1234");
             System.out.println(connect);
         }
     }
@@ -200,7 +201,6 @@ public class UserDAO {
         System.out.println(user.ppsBal);
 
         listUser.add(user);
-        resultSet.close();
         return listUser;
     }
     
@@ -258,7 +258,7 @@ public class UserDAO {
     
     public boolean follow(String followee, String follower) throws SQLException{
     	connect_func();
-    	String sql = "INSERT INTO follow(followeeUsername, followerUsername) VALUES (?,?)";
+    	String sql = "INSERT INTO follow(followeeID, followerID) VALUES (?,?)";
     	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
     	preparedStatement.setString(1, followee);
     	preparedStatement.setString(2, follower);
@@ -268,7 +268,7 @@ public class UserDAO {
     
     public boolean unfollow(String followee, String follower) throws SQLException{
     	connect_func();
-    	String sql = "DELETE FROM follow WHERE followeeUsername = ? and followerUsername = ?";
+    	String sql = "DELETE FROM follow WHERE followeeID = ? and followerID = ?";
     	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
     	preparedStatement.setString(1, followee);
     	preparedStatement.setString(2, follower);
@@ -278,7 +278,7 @@ public class UserDAO {
     
     public boolean isFollowing(String followee, String follower) throws SQLException{
     	connect_func();
-    	String sql = "SELECT * FROM follow WHERE followeeUsername = ? and followerUsername = ?";
+    	String sql = "SELECT * FROM follow WHERE followeeID = ? and followerID = ?";
     	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
     	preparedStatement.setString(1, followee);
     	preparedStatement.setString(2, follower);

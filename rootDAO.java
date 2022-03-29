@@ -37,6 +37,7 @@ public class rootDAO {
 	       
     /**
      * @see HttpServlet#HttpServlet()
+     * "useSSL=false&user=john&password=pass1234"
      */
     protected void connect_func() throws SQLException {
         if (connect == null || connect.isClosed()) {
@@ -47,7 +48,7 @@ public class rootDAO {
             }
             connect = (Connection) DriverManager
   			      .getConnection("jdbc:mysql://127.0.0.1:3306/testdb?"
-  			          + "useSSL=false&user=Fran&password=OgreMagi5!!!!!");
+  			          + "useSSL=false&user=john&password=pass1234");
             System.out.println(connect);
         }
     }
@@ -56,5 +57,14 @@ public class rootDAO {
     	return (ROOT.username.equals(attempt.username) && ROOT.password.equals(attempt.password));
     }
     
+    public void buyPPS(root root, User user, int ppsAmount) {
+    	
+    	
+    }
+    
+    public void sellPPS(root root, User user, int ppsAmount) {
+    	
+    	
+    }
     
 }

@@ -293,5 +293,21 @@ public class ControlServlet extends HttpServlet {
      
         System.out.println("deletePeople finished: 1111111111111111111111111111111");
     }
+    
+    private void followUser(HttpServletRequest request, HttpServletResponse response)
+            throws SQLException, IOException {
+    	String followeeID = (String) request.getSession().getAttribute("username");
+    	String followerID= request.getParameter("followeeID");
+    	
+    	userDAO.follow(followeeID, followerID);
+    }
+    
+    private void unfollowUser(HttpServletRequest request, HttpServletResponse response)
+            throws SQLException, IOException {
+    	String followeeID = (String) request.getSession().getAttribute("username");
+    	String followerID= request.getParameter("followeeID");
+    	
+    	userDAO.unfollow(followeeID, followerID);
+    }
 
 }
