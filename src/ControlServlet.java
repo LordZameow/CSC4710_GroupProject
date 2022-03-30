@@ -10,11 +10,13 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
 import java.sql.PreparedStatement;
+import java.sql.Timestamp;
  
 /**
  * ControllerServlet.java
@@ -27,6 +29,7 @@ public class ControlServlet extends HttpServlet {
     private PeopleDAO peopleDAO;
     private rootDAO rootDAO;
     private UserDAO userDAO;
+    private transactionsDAO transactionsDAO;
     private tweetsDAO tweetsDAO;
  
     public void init() {
@@ -100,6 +103,21 @@ public class ControlServlet extends HttpServlet {
             	System.out.println("The action is: user login");
             	userLogin(request,response);
             	break;
+            case "/showUserProfile":
+            	System.out.println("The action is: show user profile");
+            	showUserProfile(request,response);
+            case "/buyPPS":
+            	System.out.println("The action is: buy PPS");
+            	buyPPS(request,response);
+            	break;
+            case "/sellPPS":
+            	System.out.println("The action is: sell PPS");
+            	sellPPS(request,response);
+            	break;
+            case "/listAllUserTransactions":
+            	System.out.println("The action is: List all user transactions");
+            	listUserTransactions(request,response);
+            	break;
             default:
                 System.out.println("Not sure which action, we will treat it as the list action");
                 listUsers(request, response);           	
@@ -170,14 +188,28 @@ public class ControlServlet extends HttpServlet {
         System.out.println("listUsers finished: 111111111111111111111111111111111111");
     }
     
-    private void showUserProfile(HttpServletRequest request, HttpServletResponse response, String username)
+    private void listUserTransactions(HttpServletRequest request, HttpServletResponse response)
+            throws SQLException, IOException, ServletException {
+        System.out.println("listTransactions started: 00000000000000000000000000000000000");
+        String username=request.getParameter("username");
+        List<transactions> listTransactions = transactionsDAO.listAllUserTransactions(username);
+        request.setAttribute("listTransactions", listTransactions);       
+        RequestDispatcher dispatcher = request.getRequestDispatcher("UserTransactionsList.jsp");       
+        dispatcher.forward(request, response);
+     
+        System.out.println("listTransactions finished: 111111111111111111111111111111111111");
+    }
+    
+    private void showUserProfile(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException, ServletException {
         System.out.println("showUserProfile started: 00000000000000000000000000000000000");
+        String username=request.getParameter("username");
+        System.out.println(username);
         List<User> userProfile = userDAO.getUser(username);
-        
         request.setAttribute("profile", userProfile);       
         RequestDispatcher dispatcher = request.getRequestDispatcher("UserProfile.jsp");       
         dispatcher.forward(request, response);
+        System.out.println("showUserProfile Finished: 111111111111111111111111111111111111");
         
     }
  
@@ -255,13 +287,52 @@ public class ControlServlet extends HttpServlet {
 	    String username=request.getParameter("username");
 	    String password=request.getParameter("password");
 	    if(userDAO.checkUser(username,password)) {
-	    	showUserProfile(request,response,username);
+	    	HttpSession session = request.getSession();
+	    	session.setAttribute("username",username);
+	    	
+	    	showUserProfile(request,response);
 	    	//response.sendRedirect("listUsers");
 	    }
 	    else{
 	    	response.sendRedirect("showUserLogin");
 	    	}
 
+    }
+    
+    private void buyPPS(HttpServletRequest request, HttpServletResponse response)
+    		throws SQLException, IOException, ServletException {
+	    System.out.println("buyPPS started: 000000000000000000000000000");
+	    String username=(String)request.getSession().getAttribute("username");
+	    System.out.println(username);
+	    double amount=Double.parseDouble(request.getParameter("ppsAmount"));
+	    if(!userDAO.checkBalance(username,amount)) {
+	    	System.out.println("not enough money");
+	    	response.sendRedirect("listUsers");
+	    }
+	    System.out.println("buying pps");
+	    rootDAO.buyPPS(username, amount);
+	    response.sendRedirect("listUsers");
+
+	    
+	    System.out.println("buyPPS finished: 11111111111111111111111111");
+    }
+    
+    private void sellPPS(HttpServletRequest request, HttpServletResponse response)
+    		throws SQLException, IOException, ServletException {
+	    System.out.println("buyPPS started: 000000000000000000000000000");
+	    String username=(String)request.getSession().getAttribute("username");
+	    System.out.println(username);
+	    double amount=Double.parseDouble(request.getParameter("ppsAmount"));
+	    if(!userDAO.checkPPSBalance(username,amount)) {
+	    	System.out.println("not enough pps");
+	    	response.sendRedirect("listUsers");
+	    }
+	    System.out.println("selling pps");
+	    rootDAO.sellPPS(username, amount);
+	    response.sendRedirect("listUsers");
+
+	    
+	    System.out.println("buyPPS finished: 11111111111111111111111111");
     }
     
     private void updatePeople(HttpServletRequest request, HttpServletResponse response)
@@ -301,7 +372,6 @@ public class ControlServlet extends HttpServlet {
     	String followerID= request.getParameter("followeeID");
     	
     	userDAO.follow(followeeID, followerID);
-    	response.sendRedirect("UsersList.jsp");
     }
     
     private void unfollowUser(HttpServletRequest request, HttpServletResponse response)
@@ -312,7 +382,7 @@ public class ControlServlet extends HttpServlet {
     	userDAO.unfollow(followeeID, followerID);
     	response.sendRedirect("UsersList.jsp");
     }
-    
+
     private void likePost(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException {
     	String username = (String) request.getSession().getAttribute("username");

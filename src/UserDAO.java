@@ -36,7 +36,7 @@ public class UserDAO {
             }
             connect = (Connection) DriverManager
   			      .getConnection("jdbc:mysql://127.0.0.1:3306/testdb?"
-  			          + "useSSL=false&user=john&password=pass1234");
+  			          + "useSSL=false&user=Fran&password=2489823172aA");
             System.out.println(connect);
         }
     }
@@ -194,12 +194,6 @@ public class UserDAO {
             user = new User(userName, password, firstName, lastName, age, dollarBal, ppsBal);
         }
         
-        System.out.println(user.age);
-        System.out.println(user.firstName);
-        System.out.println(user.lastName);
-        System.out.println(user.dollarBal);
-        System.out.println(user.ppsBal);
-
         listUser.add(user);
         return listUser;
     }
@@ -235,16 +229,35 @@ public class UserDAO {
     	}
     }
     
-    public boolean checkBalance(String username, float amount)throws SQLException{
+    public boolean checkBalance(String username, double amount)throws SQLException{
     	connect_func();
     	String sql = "SELECT dollarBal FROM user WHERE username = ?";
     	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
     	preparedStatement.setString(1, username);
     	ResultSet resultSet = preparedStatement.executeQuery();
-    	
     	if (resultSet.next()) {
-    		float userBal = resultSet.getFloat("dollarBal");
-    		if(userBal>amount) {
+    		double userBal = resultSet.getDouble("dollarBal");
+    		if(userBal>amount*.01) {
+    			return true;
+    		}
+    		else {
+    			return false;
+    		}
+    	}
+    	else {
+    		return false;
+    	}
+    }
+    
+    public boolean checkPPSBalance(String username, double amount)throws SQLException{
+    	connect_func();
+    	String sql = "SELECT ppsBal FROM user WHERE username = ?";
+    	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+    	preparedStatement.setString(1, username);
+    	ResultSet resultSet = preparedStatement.executeQuery();
+    	if (resultSet.next()) {
+    		double ppsBal = resultSet.getDouble("ppsBal");
+    		if(ppsBal>amount) {
     			return true;
     		}
     		else {
