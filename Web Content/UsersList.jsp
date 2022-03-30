@@ -27,9 +27,14 @@ if(request.getParameter("listPeople") == null) { // we want to make sure that we
             <a href="new">Add New People</a>
             &nbsp;&nbsp;&nbsp;
             <a href="list">List All People</a>
-             
+             <%=request.getAttribute("username")%>!
         </h2>
 --%>
+<h2>
+Logged in as user:
+<% String value=(String)session.getAttribute("username");%>
+<% out.print(value); %>
+</h2>
     </center>
     <div align="center">
         <table border="1" cellpadding="5">
@@ -47,16 +52,13 @@ if(request.getParameter("listPeople") == null) { // we want to make sure that we
                     <td><c:out value="${user.firstName}" /></td>
                     <td><c:out value="${user.lastName}" /></td>
                     <td><c:out value="${user.age}" /></td>
-               <%-- 
                     <td>
-                        <a href="edit?id=<c:out value='${people.id}' />">Edit</a>
-                        &nbsp;&nbsp;&nbsp;&nbsp;
-                        <a href="delete?id=<c:out value='${people.id}' />">Delete</a>                     
+                        <a href="showUserProfile?username=<c:out value='${user.userName}' />">See profile</a>
                     </td>
-                --%>
                 </tr>
             </c:forEach>
         </table>
+        <a href = "javascript:history.back()">Back to previous page</a>
     </div>   
 </body>
 </html>

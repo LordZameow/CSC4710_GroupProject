@@ -49,18 +49,39 @@ if(request.getParameter("listPeople") == null) { // we want to make sure that we
                     <td><c:out value="${user.lastName}" /></td>
                     <td><c:out value="${user.age}" /></td>
                     <td><c:out value="${user.dollarBal}" /></td>
-                    <td><c:out value="${user.ppsBal}" /></td>
+                    <td><c:out value="${user.getPPSBal()}" /></td>
                     
-                      <%-- 
-                    <td>
-                        <a href="edit?id=<c:out value='${people.id}' />">Edit</a>
-                        &nbsp;&nbsp;&nbsp;&nbsp;
-                        <a href="delete?id=<c:out value='${people.id}' />">Delete</a>                     
-                    </td>
-                --%>
                 </tr>
             </c:forEach>
         </table>
+        <form action="buyPPS" method="post">
+            <td colspan="2" align="center">
+                <label for="buyAmount">Buy PPS:</label>
+                <input type="number" id="ppsAmount" name="ppsAmount" min="0" max="1000" step="10" value="0">
+                <input type="submit" value="Buy PPSwap" />
+            </td>
+         </form>
+        
+        <form action="sellPPS" method="post">
+            <td colspan="2" align="center">
+                <label for="sellAmount">Sell PPS:</label>
+                <input type="number" id="ppsAmount" name="ppsAmount" min="0" max="1000" step="10" value="0">
+                <input type="submit" value="Sell PPSwap" />
+                </td>
+        </form>
+        
+        <form action="postTweet" method="post">
+            <td>
+                <label for="tweet">Post a Tweet:</label>
+                <input type="text" name="postTweet" size="50"
+                value="<c:out value='${tweet.content}' />"
+                />
+                <input type="submit" value="Post Tweet" />
+            </td>
+        </form>
+
+        <a href = "listUsers">List all Users</a>
+        <a href = "listAllUserTransactions">List all User Transactions</a>
     </div>   
 </body>
 </html>
