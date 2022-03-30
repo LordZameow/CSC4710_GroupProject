@@ -43,6 +43,27 @@ public class followDAO {
         }
     }
     
+    public List<follow> listAllFollow() throws SQLException {
+        List<follow> listfollow = new ArrayList<follow>();        
+        String sql = "SELECT * FROM follow";      
+        connect_func();      
+        statement =  (Statement) connect.createStatement();
+        ResultSet resultSet = statement.executeQuery(sql);
+         
+        while (resultSet.next()) {
+            String followeeID = resultSet.getString("followeeID");
+            String followerID = resultSet.getString("followerID");
+            
+             
+            follow follow = new follow(followeeID,followerID);
+            listfollow.add(follow);
+        }        
+        resultSet.close();
+        statement.close();         
+        disconnect();        
+        return listfollow;
+    }
+    
     public boolean follow(String followee, String follower) throws SQLException{
     	connect_func();
     	String sql = "INSERT INTO follow(followeeID, followerID) VALUES (?,?)";
