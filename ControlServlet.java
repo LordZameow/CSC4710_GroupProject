@@ -27,6 +27,7 @@ public class ControlServlet extends HttpServlet {
     private PeopleDAO peopleDAO;
     private rootDAO rootDAO;
     private UserDAO userDAO;
+    private tweetsDAO tweetsDAO;
  
     public void init() {
         peopleDAO = new PeopleDAO();
@@ -300,6 +301,7 @@ public class ControlServlet extends HttpServlet {
     	String followerID= request.getParameter("followeeID");
     	
     	userDAO.follow(followeeID, followerID);
+    	response.sendRedirect("UsersList.jsp");
     }
     
     private void unfollowUser(HttpServletRequest request, HttpServletResponse response)
@@ -308,6 +310,27 @@ public class ControlServlet extends HttpServlet {
     	String followerID= request.getParameter("followeeID");
     	
     	userDAO.unfollow(followeeID, followerID);
+    	response.sendRedirect("UsersList.jsp");
+    }
+    
+    private void likePost(HttpServletRequest request, HttpServletResponse response)
+            throws SQLException, IOException {
+    	String username = (String) request.getSession().getAttribute("username");
+    	int tweetID= Integer.parseInt(request.getParameter("tweetID"));
+    	
+    	if(tweetsDAO.like(username,tweetID)) 
+    		response.sendRedirect("feed");
+    		
     }
 
+    
+    private void dislikePost(HttpServletRequest request, HttpServletResponse response)
+            throws SQLException, IOException {
+    	String username = (String) request.getSession().getAttribute("username");
+    	int tweetID= Integer.parseInt(request.getParameter("tweetID"));
+    	
+    	if(tweetsDAO.dislike(username,tweetID)) 
+    		response.sendRedirect("feed");
+    		
+    }
 }

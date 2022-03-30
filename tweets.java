@@ -3,13 +3,20 @@ public class tweets {
 
 protected int tweetID;
 protected String content;
+protected String author;
 
 public tweets() {
 }
 
-public tweets(int tweetID, String content) {
+public tweets(int tweetID, String content, String author) {
 	this.tweetID = tweetID;
 	this.content = content;
+	this.author= author;
+}
+
+public tweets(String content, String author) {
+	this.content = content;
+	this.author = author;
 }
 
 public int getTweetID() {
