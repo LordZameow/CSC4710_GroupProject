@@ -36,7 +36,7 @@ import javax.servlet.http.HttpServlet;
             }
             connect = (Connection) DriverManager
   			      .getConnection("jdbc:mysql://127.0.0.1:3306/testdb?"
-  			          + "useSSL=false&user=john&password=pass1234");
+  			          + "useSSL=false&user=Fran&password=2489823172aA");
             System.out.println(connect);
         }
     }
@@ -47,31 +47,32 @@ import javax.servlet.http.HttpServlet;
         }
     }
     
-    public List<tweets> listAllTweets() throws SQLException {
-        List<tweets> listTweets = new ArrayList<tweets>();        
-        String sql = "SELECT * FROM comments";      
+    public List<comment>listAllComments(int tweetID) throws SQLException{
+        List<comment> listComments = new ArrayList<comment>();  
+        String sql = "SELECT * FROM comment where tweetID = ?";   
         connect_func();      
-        statement =  (Statement) connect.createStatement();
-        ResultSet resultSet = statement.executeQuery(sql);
+        preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+        preparedStatement.setInt(1, tweetID);
+        ResultSet resultSet = preparedStatement.executeQuery();
          
         while (resultSet.next()) {
-        	int tweetID = resultSet.getInt("tweetID");
+        	int tableTweetID=resultSet.getInt("tweetID");
             String content = resultSet.getString("content");
-            String author = resultSet.getString("author");
-            String transTime = resultSet.getString("transTime");
-            
+            String commenter = resultSet.getString("commentor");
+            String transTime=resultSet.getString("transTime");
+            int commentID=resultSet.getInt("id");
              
-            tweets tweet = new tweets(tweetID,content,author,transTime);
-            listTweets.add(tweet);
+            comment commentObject = new comment(tableTweetID,content,commenter,commentID,transTime);
+            listComments.add(commentObject);
         }        
         resultSet.close();
-        statement.close();         
+        preparedStatement.close();         
         disconnect();        
-        return listTweets;
+        return listComments;
     }
     
     public boolean comment(int tweetID, String content, String commenter) throws SQLException{
-    	String sql = "INSERT INTO comment WHERE tweetID = ?";
+    	String sql = "INSERT INTO comment(tweetID,content,commentor) values (?,?,?)";
     	connect_func();
         
         preparedStatement = (PreparedStatement) connect.prepareStatement(sql);

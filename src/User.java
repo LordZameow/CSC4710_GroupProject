@@ -5,8 +5,9 @@ protected String firstName;
 protected String lastName;
 protected String userName;
 protected String password;
-protected double ppsBal;
 protected double dollarBal;
+protected double ppsBal;
+
 
 public User() {
 }
@@ -34,8 +35,8 @@ public User(String userName,String password, String firstName, String lastName,i
 	this.firstName = firstName;
 	this.lastName = lastName;
 	this.age = age;
-	this.ppsBal = ppsBal;
 	this.dollarBal = dollarBal;
+	this.ppsBal = ppsBal;
 }
 
 public int getAge() {
@@ -78,11 +79,11 @@ public void setPassword(String password) {
 	this.password = password;
 }
 
-public double getPPSwapBal() {
+public double getPPSBal() {
 	return ppsBal;
 }
 
-public void setPPSwapBal(double ppSwapBal) {
+public void setPPSBal(double ppSwapBal) {
 	this.ppsBal = ppSwapBal;
 }
 

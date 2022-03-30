@@ -11,7 +11,7 @@ import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 
-@WebServlet("/UserDAO")
+@WebServlet("/transactionsDAO")
 public class transactionsDAO {
 	private static final long serialVersionUID = 1L;
 	private Connection connect = null;
@@ -45,9 +45,11 @@ public class transactionsDAO {
     public List<transactions> listAllUserTransactions(String username) throws SQLException {
         List<transactions> listTransactions = new ArrayList<transactions>();        
         String sql = "SELECT * FROM transactions WHERE sender = ? OR reciever = ? ORDER by transTime";      
-        connect_func();      
-        statement =  (Statement) connect.createStatement();
-        ResultSet resultSet = statement.executeQuery(sql);
+        connect_func();
+        preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+		preparedStatement.setString(1, username);
+		preparedStatement.setString(2,username);
+        ResultSet resultSet = preparedStatement.executeQuery();
          
         while (resultSet.next()) {
             int transID=resultSet.getInt("transID");
@@ -63,7 +65,7 @@ public class transactionsDAO {
             listTransactions.add(transaction);
         }        
         resultSet.close();
-        statement.close();         
+        preparedStatement.close();
         disconnect();        
         return listTransactions;
     }

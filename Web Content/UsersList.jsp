@@ -45,6 +45,8 @@ Logged in as user:
                 <th>Last Name</th>
                 <th>Age</th>
                 <th>Actions</th>
+                <th>Follow</th>
+                <th>Unfollow</th>
             </tr>
             <c:forEach var="user" items="${listUsers}">
                 <tr>
@@ -55,6 +57,18 @@ Logged in as user:
                     <td>
                         <a href="showUserProfile?username=<c:out value='${user.userName}' />">See profile</a>
                     </td>
+                    <form action="follow" method="post">
+                    <input type="hidden" name="followeeID"
+                       value="<c:out value='${user.userName}' />"
+                       />
+                    <td><input type="submit" value="follow" /></td>
+                    </form>
+                    <form action="unfollow" method="post">
+                    <input type="hidden" name="followeeID"
+                       value="<c:out value='${user.userName}' />"
+                       />
+                    <td><input type="submit" value="unfollow" /></td>
+                    </form>
                 </tr>
             </c:forEach>
         </table>

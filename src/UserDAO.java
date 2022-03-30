@@ -97,7 +97,8 @@ public class UserDAO {
 
              
             User user = new User(userName,password, firstName, lastName, age);
-            listUser.add(user);
+            if(!userName.equals("root"))
+            	listUser.add(user);
         }        
         resultSet.close();
         statement.close();         
@@ -269,40 +270,28 @@ public class UserDAO {
     	}
     }
     
-    public boolean follow(String followee, String follower) throws SQLException{
+    public void tipPPS(String username,String followee, double ppsAmount) throws SQLException {
     	connect_func();
-    	String sql = "INSERT INTO follow(followeeID, followerID) VALUES (?,?)";
+    	String sql = "UPDATE user SET ppsBal=ppsBal- ? WHERE username = ?";
     	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
-    	preparedStatement.setString(1, followee);
-    	preparedStatement.setString(2, follower);
+    	preparedStatement.setDouble(1, ppsAmount);
+    	preparedStatement.setString(2, username);
+    	preparedStatement.executeUpdate();
     	
-    	return preparedStatement.executeUpdate() > 0;
-    }
-    
-    public boolean unfollow(String followee, String follower) throws SQLException{
-    	connect_func();
-    	String sql = "DELETE FROM follow WHERE followeeID = ? and followerID = ?";
-    	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
-    	preparedStatement.setString(1, followee);
-    	preparedStatement.setString(2, follower);
+    	String sq2="UPDATE user SET ppsBal=ppsBal+ ? WHERE username =?";
+    	preparedStatement = (PreparedStatement) connect.prepareStatement(sq2);
+    	preparedStatement.setDouble(1, ppsAmount);
+    	preparedStatement.setString(2, followee);
+    	preparedStatement.executeUpdate();
     	
-    	return preparedStatement.executeUpdate() > 0;
-    }
-    
-    public boolean isFollowing(String followee, String follower) throws SQLException{
-    	connect_func();
-    	String sql = "SELECT * FROM follow WHERE followeeID = ? and followerID = ?";
-    	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+		String sq3 = "insert into transactions(sender, reciever, ppsAmount, transType, ppsPrice) values (?,?,?,?,?)";
+    	preparedStatement = (PreparedStatement) connect.prepareStatement(sq3);
     	preparedStatement.setString(1, followee);
-    	preparedStatement.setString(2, follower);
-    	ResultSet resultSet = preparedStatement.executeQuery();
-    	
-    	if (resultSet.next()) {
-    		return true;
-    	}
-    	else {
-    		return false;
-    	}
+    	preparedStatement.setString(2, username);
+    	preparedStatement.setDouble(3,ppsAmount);
+    	preparedStatement.setString(4, "tip");
+    	preparedStatement.setDouble(5, .01);
+    	preparedStatement.executeUpdate();
     }
     
 }

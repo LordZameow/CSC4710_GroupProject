@@ -9,14 +9,14 @@ public class root {
     public root() {
     	this.username="root";
     	this.password="pass1234";
-    	this.balance=1000;
+    	this.balance=1000000000;
     	this.ppsPrice=.01;
     }
  
     public root(String username, String password) {
     	this.username=username;
     	this.password=password;
-    	balance=1000;
+    	balance=1000000000;
     	ppsPrice=.01;
     }
     

@@ -74,8 +74,8 @@ public class rootDAO {
     	
 		String sq3 = "insert into transactions(sender, reciever, ppsAmount, transType, ppsPrice) values (?,?,?,?,?)";
     	preparedStatement = (PreparedStatement) connect.prepareStatement(sq3);
-    	preparedStatement.setString(1, "root");
-    	preparedStatement.setString(2, username);
+    	preparedStatement.setString(1, username);
+    	preparedStatement.setString(2, "root");
     	preparedStatement.setDouble(3,ppsAmount);
     	preparedStatement.setString(4, "buy");
     	preparedStatement.setDouble(5, .01);
@@ -100,8 +100,8 @@ public class rootDAO {
     	
 		String sq3 = "insert into transactions(sender, reciever, ppsAmount, transType, ppsPrice) values (?,?,?,?,?)";
     	preparedStatement = (PreparedStatement) connect.prepareStatement(sq3);
-    	preparedStatement.setString(1, username);
-    	preparedStatement.setString(2, "root");
+    	preparedStatement.setString(1, "root");
+    	preparedStatement.setString(2, username);
     	preparedStatement.setDouble(3,ppsAmount);
     	preparedStatement.setString(4, "sell");
     	preparedStatement.setDouble(5, .01);

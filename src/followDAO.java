@@ -43,12 +43,14 @@ public class followDAO {
         }
     }
     
-    public List<follow> listAllFollow() throws SQLException {
+    public List<follow> listAllFollow(String username) throws SQLException {
         List<follow> listfollow = new ArrayList<follow>();        
-        String sql = "SELECT * FROM follow";      
-        connect_func();      
-        statement =  (Statement) connect.createStatement();
-        ResultSet resultSet = statement.executeQuery(sql);
+        String sql = "SELECT * FROM follow where followerID = ?";
+        connect_func();  
+        preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+		preparedStatement.setString(1, username);
+            
+        ResultSet resultSet = preparedStatement.executeQuery();
          
         while (resultSet.next()) {
             String followeeID = resultSet.getString("followeeID");
@@ -59,14 +61,14 @@ public class followDAO {
             listfollow.add(follow);
         }        
         resultSet.close();
-        statement.close();         
+        preparedStatement.close();         
         disconnect();        
         return listfollow;
     }
     
     public boolean follow(String followee, String follower) throws SQLException{
     	connect_func();
-    	String sql = "INSERT INTO follow(followeeID, followerID) VALUES (?,?)";
+    	String sql = "INSERT IGNORE INTO follow(followeeID, followerID) VALUES (?,?)";
     	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
     	preparedStatement.setString(1, followee);
     	preparedStatement.setString(2, follower);

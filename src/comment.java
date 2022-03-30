@@ -3,16 +3,18 @@ public class comment {
 protected int tweetID;
 protected String content;
 protected String commenter;
+protected int id;
 protected String transTime;
 
 public comment() {
 	
 }
 
-public comment(int tweetID, String content,String commenter,String transTime) {
+public comment(int tweetID, String content,String commenter,int id,String transTime) {
 	this.tweetID=tweetID;
 	this.content =content;
 	this.commenter=commenter;
+	this.id=id;
 	this.transTime=transTime;
 }
 
@@ -38,6 +40,10 @@ public String getCommenter() {
 
 public void setCommenter(String commenter) {
 	this.commenter = commenter;
+}
+
+public int getID() {
+	return id;
 }
 
 public String getTransTime() {

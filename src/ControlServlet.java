@@ -31,11 +31,17 @@ public class ControlServlet extends HttpServlet {
     private UserDAO userDAO;
     private transactionsDAO transactionsDAO;
     private tweetsDAO tweetsDAO;
+    private followDAO followDAO;
+    private commentDAO commentDAO;
  
     public void init() {
         peopleDAO = new PeopleDAO();
         rootDAO=new rootDAO();
         userDAO=new UserDAO();
+        transactionsDAO=new transactionsDAO();
+        followDAO=new followDAO();
+        tweetsDAO=new tweetsDAO();
+        commentDAO=new commentDAO();
     }
  
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -93,6 +99,7 @@ public class ControlServlet extends HttpServlet {
             case "/initializeDatabase":
             	System.out.println("The action is initialize database");
             	userDAO.initialize();
+            	tweetsDAO.initialize();
             	showUserLogin(request,response);
             	break;
             case "/register":
@@ -114,10 +121,44 @@ public class ControlServlet extends HttpServlet {
             	System.out.println("The action is: sell PPS");
             	sellPPS(request,response);
             	break;
+            case "/tip":
+            	System.out.println("The action is: Tip");
+            	tipPPS(request,response);
             case "/listAllUserTransactions":
             	System.out.println("The action is: List all user transactions");
             	listUserTransactions(request,response);
             	break;
+            case "/follow":
+            	System.out.println("The action is: follow");
+            	followUser(request,response);
+            	break;
+            case "/unfollow":
+            	System.out.println("The action is: unfollow");
+            	unfollowUser(request,response);
+            	break;
+            case "/postTweet":
+            	System.out.println("The action is: post tweet");
+            	post(request,response);
+            	break;
+            case "/showFeed":
+            	System.out.println("The action is: show feed");
+            	listFeed(request,response);
+            	break;
+            case "/comment":
+            	System.out.println("The action is: comment");
+            	comment(request,response);
+            	break;
+            case "/listComments":
+            	System.out.println("The action is: show comments");
+            	listComments(request,response);
+            	break;
+            case "/likePost":
+            	System.out.println("The action is: like post");
+            	likePost(request,response);
+            	break;
+            case "/dislikePost":
+            	System.out.println("The action is: dislike post");
+            	dislikePost(request,response);
             default:
                 System.out.println("Not sure which action, we will treat it as the list action");
                 listUsers(request, response);           	
@@ -188,6 +229,32 @@ public class ControlServlet extends HttpServlet {
         System.out.println("listUsers finished: 111111111111111111111111111111111111");
     }
     
+    private void listComments(HttpServletRequest request, HttpServletResponse response)
+            throws SQLException, IOException, ServletException {
+        System.out.println("listComments started: 00000000000000000000000000000000000");
+        
+        int tweetID=Integer.parseInt(request.getParameter("tweetID"));
+        List<comment> listComments = commentDAO.listAllComments(tweetID);
+        request.setAttribute("listComments", listComments);       
+        RequestDispatcher dispatcher = request.getRequestDispatcher("showComments.jsp");       
+        dispatcher.forward(request, response);
+     
+        System.out.println("listComments finished: 111111111111111111111111111111111111");
+    }
+    
+    private void listFeed(HttpServletRequest request, HttpServletResponse response)
+            throws SQLException, IOException, ServletException {
+        System.out.println("listFeed started: 00000000000000000000000000000000000");
+
+     
+        List<tweets> listTweets = tweetsDAO.listAllTweets();
+        request.setAttribute("listTweets", listTweets);    
+        
+        RequestDispatcher dispatcher = request.getRequestDispatcher("showAllTweets.jsp");       
+        dispatcher.forward(request, response);
+        System.out.println("listFeed finished: 111111111111111111111111111111111111");
+    }
+    
     private void listUserTransactions(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException, ServletException {
         System.out.println("listTransactions started: 00000000000000000000000000000000000");
@@ -204,7 +271,11 @@ public class ControlServlet extends HttpServlet {
             throws SQLException, IOException, ServletException {
         System.out.println("showUserProfile started: 00000000000000000000000000000000000");
         String username=request.getParameter("username");
-        System.out.println(username);
+        String loggedInUser = (String) request.getSession().getAttribute("username");
+        if(username.equals(loggedInUser)) {
+        	List<follow>userFollowee=followDAO.listAllFollow(loggedInUser);
+        	request.setAttribute("followeeList",userFollowee);
+        }
         List<User> userProfile = userDAO.getUser(username);
         request.setAttribute("profile", userProfile);       
         RequestDispatcher dispatcher = request.getRequestDispatcher("UserProfile.jsp");       
@@ -309,9 +380,11 @@ public class ControlServlet extends HttpServlet {
 	    	System.out.println("not enough money");
 	    	response.sendRedirect("listUsers");
 	    }
-	    System.out.println("buying pps");
-	    rootDAO.buyPPS(username, amount);
-	    response.sendRedirect("listUsers");
+	    else{
+	    	System.out.println("buying pps");
+	    	rootDAO.buyPPS(username, amount);
+	    	response.sendRedirect("listUsers");
+	    }
 
 	    
 	    System.out.println("buyPPS finished: 11111111111111111111111111");
@@ -327,12 +400,37 @@ public class ControlServlet extends HttpServlet {
 	    	System.out.println("not enough pps");
 	    	response.sendRedirect("listUsers");
 	    }
-	    System.out.println("selling pps");
-	    rootDAO.sellPPS(username, amount);
-	    response.sendRedirect("listUsers");
+	    else{
+	    	System.out.println("selling pps");
+	    	rootDAO.sellPPS(username, amount);
+	    	response.sendRedirect("listUsers");
+	    }
 
 	    
-	    System.out.println("buyPPS finished: 11111111111111111111111111");
+	    System.out.println("sellPPS finished: 11111111111111111111111111");
+    }
+    
+    private void tipPPS(HttpServletRequest request, HttpServletResponse response)
+    		throws SQLException, IOException, ServletException {
+	    System.out.println("tipPPS started: 000000000000000000000000000");
+	    String username=(String)request.getSession().getAttribute("username");
+	    System.out.println("USER: "+username);
+	    String followeeID=request.getParameter("followeeID");
+	    System.out.println("FolloweeID:" +followeeID);
+	    double amount=Double.parseDouble(request.getParameter("ppsAmount"));
+	    
+	    if(!userDAO.checkPPSBalance(username,amount)) {
+	    	System.out.println("not enough pps");
+	    	response.sendRedirect("listUsers");
+	    }
+	    else{
+	    	System.out.println("tipping pps");
+	    	userDAO.tipPPS(username,followeeID, amount);
+	    	
+	    }
+
+	    
+	    System.out.println("tipPPS finished: 11111111111111111111111111");
     }
     
     private void updatePeople(HttpServletRequest request, HttpServletResponse response)
@@ -368,28 +466,54 @@ public class ControlServlet extends HttpServlet {
     
     private void followUser(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException {
-    	String followeeID = (String) request.getSession().getAttribute("username");
-    	String followerID= request.getParameter("followeeID");
+        System.out.println("follow started: 000000000000000000000000");
+
+    	String followerID = (String) request.getSession().getAttribute("username");
+    	String followeeID= request.getParameter("followeeID");
+    	System.out.println(followeeID);
+    	followDAO.follow(followeeID, followerID);
+    	response.sendRedirect("listUsers");
     	
-    	userDAO.follow(followeeID, followerID);
+        System.out.println("follow finished: 1111111111111111111111111111111");
+
     }
     
     private void unfollowUser(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException {
-    	String followeeID = (String) request.getSession().getAttribute("username");
-    	String followerID= request.getParameter("followeeID");
+        System.out.println("unfollow started: 000000000000000000000000");
+
     	
-    	userDAO.unfollow(followeeID, followerID);
-    	response.sendRedirect("UsersList.jsp");
+    	String followerID = (String) request.getSession().getAttribute("username");
+    	String followeeID= request.getParameter("followeeID");
+    	
+    	followDAO.unfollow(followeeID, followerID);
+    	response.sendRedirect("listUsers");
+    	
+        System.out.println("unfollow finished: 111111111111111111111111111");
+
     }
 
+    private void post(HttpServletRequest request, HttpServletResponse response)
+            throws SQLException, IOException {
+        String content = request.getParameter("content");
+        String author =(String)request.getSession().getAttribute("username");
+        tweets tweet = new tweets(content,author);
+        if(tweetsDAO.post(tweet)) {
+            response.sendRedirect("showFeed");
+        }
+
+    }
+    
     private void likePost(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException {
     	String username = (String) request.getSession().getAttribute("username");
     	int tweetID= Integer.parseInt(request.getParameter("tweetID"));
     	
     	if(tweetsDAO.like(username,tweetID)) 
-    		response.sendRedirect("feed");
+    		response.sendRedirect("showFeed");
+    	else {
+    		response.sendRedirect("showFeed");
+    	}
     		
     }
 
@@ -400,7 +524,17 @@ public class ControlServlet extends HttpServlet {
     	int tweetID= Integer.parseInt(request.getParameter("tweetID"));
     	
     	if(tweetsDAO.dislike(username,tweetID)) 
-    		response.sendRedirect("feed");
-    		
+    		System.out.println("dislike");
+    }
+    
+    private void comment(HttpServletRequest request, HttpServletResponse response)
+            throws SQLException, IOException {
+    int tweetID = Integer.parseInt(request.getParameter("tweetID"));
+    String content = request.getParameter("commentContent");
+    String commenter = (String) request.getSession().getAttribute("username"); 
+
+    if(commentDAO.comment(tweetID,content,commenter)) {
+        response.sendRedirect("showAllTweets.jsp");
+    	}
     }
 }

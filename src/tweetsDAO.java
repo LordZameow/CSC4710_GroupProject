@@ -36,7 +36,7 @@ public class tweetsDAO {
             }
             connect = (Connection) DriverManager
   			      .getConnection("jdbc:mysql://127.0.0.1:3306/testdb?"
-  			          + "useSSL=false&user=john&password=pass1234");
+  			          + "useSSL=false&user=Fran&password=2489823172aA");
             System.out.println(connect);
         }
     }
@@ -49,31 +49,31 @@ public class tweetsDAO {
     
     public void initialize() throws SQLException{
     	
-    	String delData="DELETE from user";
+    	String delData="DELETE from tweets";
     	connect_func();      
     	preparedStatement = (PreparedStatement) connect.prepareStatement(delData);
     	statement=connect.createStatement();
     	statement.executeUpdate(delData);
          
-    	String insert1 = "insert into  tweets(\"content\", \"author\") values "
+    	String insert1 = "insert into  tweets(content, author) values "
     			+ "(\"It is with immeasurable grief that we confirm the passing of Chadwick Boseman. Chadwick was diagnosed with stage III colon cancer in 2016, and battled with it these last 4 years as it progressed to stage IV\",\"nighthawk@verizon.net\")";
-    	String insert2 = "insert into  tweets(\"content\", \"author\") values "
+    	String insert2 = "insert into  tweets(content, author) values "
     			+ "(\"No one is born hating another person because of the color of his skin or his background or his religion\",\"lydia@outlook.com\")";
-    	String insert3 = "insert into  tweets(\"content\", \"author\") values "
+    	String insert3 = "insert into  tweets(content, author) values "
     			+ "(\"It's a new day in America\",\"sabren@comcast.net\")";
-    	String insert4 = "insert into  tweets(\"content\", \"author\") values "
+    	String insert4 = "insert into  tweets(content, author) values "
     			+ "(\"Kobe was a legend on the court and just getting started in what would have been just as meaningful a second act. To lose Gianna is even more heartbreaking to us as parents. Michelle and I send love and prayers to Vanessa and the entire Bryant family on an unthinkable day\",\"bulletin@me.com\")";
-    	String insert5 = "insert into  tweets(\"content\", \"author\") values "
+    	String insert5 = "insert into  tweets(content, author) values "
     			+ "(\"Congratulations to the Astronauts that left Earth today. Good choice\",\"mhanoh@outlook.com\")";
-    	String insert6 = "insert into  tweets(\"content\", \"author\") values "
+    	String insert6 = "insert into  tweets(content, author) values "
     			+ "(\"hello literally everyone\",\"smpeters@comcast.net\")";
-    	String insert7 = "insert into  tweets(\"content\", \"author\") values "
+    	String insert7 = "insert into  tweets(content, author) values "
     			+ "(\" 	teamwork makes the dream work\",\"mcraigw@live.com\")";
-    	String insert8 = "insert into  tweets(\"content\", \"author\") values "
+    	String insert8 = "insert into  tweets(content, author) values "
     			+ "(\"America, I'm honored that you have chosen me to lead our great country.\",\"wenzlaff@comcast.net\")";
-    	String insert9 = "insert into  tweets(\"content\", \"author\") values "
+    	String insert9 = "insert into  tweets(content, author) values "
     			+ "(\"teamwork makes the dream work\",\"kjohnson@outlook.com\")";
-    	String insert10 = "insert into  tweets(tweetID,\" content) values "
+    	String insert10 = "insert into  tweets(content, author) values "
     			+ "(\"Happy Birthday to me\",\"kjohnson@outlook.com\")";
 		statement.executeUpdate(insert1);
 		statement.executeUpdate(insert2);
@@ -95,11 +95,13 @@ public class tweetsDAO {
         ResultSet resultSet = statement.executeQuery(sql);
          
         while (resultSet.next()) {
+        	int tweetID=resultSet.getInt("tweetID");
             String content = resultSet.getString("content");
             String author = resultSet.getString("author");
-            
+            String transTime=resultSet.getString("transTime");
+            int likeCounter=getLikeCounter(tweetID);
              
-            tweets tweet = new tweets(content,author);
+            tweets tweet = new tweets(tweetID,content,author,likeCounter,transTime);
             listTweets.add(tweet);
         }        
         resultSet.close();
@@ -107,6 +109,8 @@ public class tweetsDAO {
         disconnect();        
         return listTweets;
     }
+    
+    
     
     public boolean post(tweets tweet) throws SQLException {
     	connect_func();         
@@ -116,29 +120,7 @@ public class tweetsDAO {
 		preparedStatement.setString(1, tweet.content);
 		preparedStatement.setString(2, tweet.author);
 		preparedStatement.executeUpdate();
-		
-		String sql = "SELECT * FROM tweets WHERE content = ? AND author =?";
-    	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
-    	preparedStatement.setString(1, tweet.content);
-    	preparedStatement.setString(2, tweet.author);
-    	ResultSet resultSet = preparedStatement.executeQuery();
-
-    	if(resultSet.next()) {
-    		String sq3 = "UPDATE tweets SET tweetID = ?, content =?, author = ?";
-    		preparedStatement = (PreparedStatement) connect.prepareStatement(sq3);
-    		preparedStatement.setInt(1, tweet.tweetID);
-    		preparedStatement.setString(2, tweet.content);
-    		preparedStatement.setString(3, tweet.author);
-    		
-            boolean rowUpdated = preparedStatement.executeUpdate() > 0;
-            preparedStatement.close();
-            return rowUpdated;  
-    	}
-    	else {
-    		return false;
-    	}
-    		
-
+		return true;
     	
     }
     
@@ -170,7 +152,8 @@ public class tweetsDAO {
     
     
     public boolean like(String username,int tweetID) throws SQLException{
-    	String sql = "INSERT INTO likes(username,tweetID) values(?,?)";
+    	String sql = "INSERT IGNORE INTO likes(userID,tweetID) values(?,?)";
+    	connect_func();
     	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
         preparedStatement.setString(1, username);
         preparedStatement.setInt(2, tweetID);
@@ -181,7 +164,8 @@ public class tweetsDAO {
     }
 
     public boolean dislike(String username,int tweetID) throws SQLException{
-    	String sql = "DELETE from likes where username = ? AND tweetID = ?";
+    	String sql = "DELETE from likes where userID = ? AND tweetID = ?";
+    	connect_func();
     	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
         preparedStatement.setString(1, username);
         preparedStatement.setInt(2, tweetID);
@@ -192,7 +176,7 @@ public class tweetsDAO {
     }
     
     public int getLikeCounter(int tweetID)throws SQLException{
-    	String sql = "SELECT coount(*) FROM likes WHERE tweetID = ?";
+    	String sql = "SELECT count(*) FROM likes WHERE tweetID = ?";
     	connect_func();
         
         preparedStatement = (PreparedStatement) connect.prepareStatement(sql);

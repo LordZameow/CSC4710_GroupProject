@@ -27,6 +27,30 @@ public int getTransID() {
 	return transID;
 }
 
+public String getSender() {
+	return sender;
+}
+
+public String getReciever() {
+	return reciever;
+}
+
+public double getPPSAmount() {
+	return ppsAmount;
+}
+
+public String getTransTime() {
+	return transTime;
+}
+
+public String getTransType() {
+	return transType;
+}
+
+public double getPPSPrice() {
+	return ppsPrice;
+}
+
 public void setTransID(int transID) {
 	this.transID=transID;
 }

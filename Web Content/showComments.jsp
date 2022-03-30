@@ -5,7 +5,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-    <title>User Transaction List</title>
+    <title>User Profile List</title>
 </head>
 <body>
 
@@ -38,27 +38,22 @@ Logged in as user:
     </center>
     <div align="center">
         <table border="1" cellpadding="5">
-            <caption><h2>List of Transactions</h2></caption>
+            <caption><h2>List of Comments</h2></caption>
             <tr>
-                <th>transID</th>
-                <th>To</th>
-                <th>From</th>
-                <th>ppsAmount</th>
-                <th>Transaction Time</th>
-                <th>Transaction Type</th>
-                <th>ppsPrice</th>
+                <th>Tweet ID</th>
+                <th>Content</th>
+                <th>Author</th>
+                <th>Time of Post</th>
+                <th>Comment ID</th>
             </tr>
-            <c:forEach var="transaction" items="${listTransactions}">
+            <c:forEach var="comment" items="${listComments}">
                 <tr>
-                    <td><c:out value="${transaction.getTransID()}" /></td>
-                    <td><c:out value="${transaction.getSender()}" /></td>
-                    <td><c:out value="${transaction.getReciever()}" /></td>
-                    <td><c:out value="${transaction.getPPSAmount()}" /></td>
-                    <td><c:out value="${transaction.getTransTime()}" /></td>
-                    <td><c:out value="${transaction.getTransType()}" /></td>
-                    <td><c:out value="${transaction.getPPSPrice()}" /></td>
-                </tr>
-            </c:forEach>
+                    <td><c:out value="${comment.getTweetID()}" /></td>
+                    <td><c:out value="${comment.getContent()}" /></td>
+                    <td><c:out value="${comment.getCommenter()}" /></td>
+                    <td><c:out value="${comment.getTransTime()}" /></td>
+	                <td><c:out value="${comment.getID()}" /></td>    
+                </c:forEach>
         </table>
         <a href = "javascript:history.back()">Back to previous page</a>
     </div>   
