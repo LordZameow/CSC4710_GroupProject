@@ -274,9 +274,11 @@ public class ControlServlet extends HttpServlet {
         String loggedInUser = (String) request.getSession().getAttribute("username");
         if(username.equals(loggedInUser)) {
         	List<follow>userFollowee=followDAO.listAllFollow(loggedInUser);
-        	request.setAttribute("followeeList",userFollowee);
+        	request.setAttribute("followeeList",userFollowee);	        
         }
+        
         List<User> userProfile = userDAO.getUser(username);
+        
         request.setAttribute("profile", userProfile);       
         RequestDispatcher dispatcher = request.getRequestDispatcher("UserProfile.jsp");       
         dispatcher.forward(request, response);
@@ -376,9 +378,11 @@ public class ControlServlet extends HttpServlet {
 	    String username=(String)request.getSession().getAttribute("username");
 	    System.out.println(username);
 	    double amount=Double.parseDouble(request.getParameter("ppsAmount"));
+	    HttpSession session = request.getSession();
+    	session.setAttribute("buyPPSAmount",amount);
 	    if(!userDAO.checkBalance(username,amount)) {
 	    	System.out.println("not enough money");
-	    	response.sendRedirect("listUsers");
+	    	response.sendRedirect("error.jsp");
 	    }
 	    else{
 	    	System.out.println("buying pps");
@@ -398,7 +402,7 @@ public class ControlServlet extends HttpServlet {
 	    double amount=Double.parseDouble(request.getParameter("ppsAmount"));
 	    if(!userDAO.checkPPSBalance(username,amount)) {
 	    	System.out.println("not enough pps");
-	    	response.sendRedirect("listUsers");
+	    	response.sendRedirect("error.jsp");
 	    }
 	    else{
 	    	System.out.println("selling pps");
@@ -418,10 +422,9 @@ public class ControlServlet extends HttpServlet {
 	    String followeeID=request.getParameter("followeeID");
 	    System.out.println("FolloweeID:" +followeeID);
 	    double amount=Double.parseDouble(request.getParameter("ppsAmount"));
-	    
 	    if(!userDAO.checkPPSBalance(username,amount)) {
 	    	System.out.println("not enough pps");
-	    	response.sendRedirect("listUsers");
+	    	response.sendRedirect("error.jsp");
 	    }
 	    else{
 	    	System.out.println("tipping pps");

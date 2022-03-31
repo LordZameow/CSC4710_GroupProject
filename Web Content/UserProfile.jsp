@@ -70,6 +70,7 @@ if(request.getParameter("listPeople") == null) { // we want to make sure that we
                 <input type="number" id="ppsAmount" name="ppsAmount" min="1" max="10000" step="1" value="1">
                 <input type="submit" value="Sell PPSwap" />
                 </td>
+                
         </form>
         
         <form action="postTweet" method="post">
