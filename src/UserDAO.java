@@ -238,7 +238,7 @@ public class UserDAO {
     	ResultSet resultSet = preparedStatement.executeQuery();
     	if (resultSet.next()) {
     		double userBal = resultSet.getDouble("dollarBal");
-    		if(userBal>amount*.01) {
+    		if(userBal>=amount*.01) {
     			return true;
     		}
     		else {
@@ -258,7 +258,7 @@ public class UserDAO {
     	ResultSet resultSet = preparedStatement.executeQuery();
     	if (resultSet.next()) {
     		double ppsBal = resultSet.getDouble("ppsBal");
-    		if(ppsBal>amount) {
+    		if(ppsBal>=amount) {
     			return true;
     		}
     		else {
