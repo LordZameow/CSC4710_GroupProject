@@ -93,8 +93,7 @@ public class ControlServlet extends HttpServlet {
                 break;
             case "/rootLogin":
             	System.out.println("The action is root login");
-            	while(!rootLogin(request,response)) {}
-            	showInitializeDatabase(request,response);
+            	rootLogin(request,response);
             	break;
             case "/initializeDatabase":
             	System.out.println("The action is initialize database");
@@ -113,6 +112,21 @@ public class ControlServlet extends HttpServlet {
             case "/showUserProfile":
             	System.out.println("The action is: show user profile");
             	showUserProfile(request,response);
+            case "/showRootInfo":
+            	System.out.println("The action is: show root info");
+            	showRootInfo(request,response);
+            case "/commonFollowers":
+            	System.out.println("The action is: list common followers");
+            	listCommonFollowers(request,response);
+            case "/listStats":
+            	System.out.println("The action is: list stats");
+            	listStats(request,response);
+            case "/listInactiveUsers":
+            	System.out.println("The action is: list stats");
+            	listInactiveUsers(request,response);
+            case "/showRootLogin":
+            	System.out.println("The action is: show root login");
+            	showRootLogin(request,response);
             case "/buyPPS":
             	System.out.println("The action is: buy PPS");
             	buyPPS(request,response);
@@ -170,15 +184,85 @@ public class ControlServlet extends HttpServlet {
         System.out.println("doGet finished: 111111111111111111111111111111111111");
     }
     
-    private void showInitializeDatabase(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        System.out.println("showInitializeDatabase started: 000000000000000000000000000");
+    private void showRootInfo(HttpServletRequest request, HttpServletResponse response)
+            throws SQLException, IOException, ServletException {
+        System.out.println("showRootInfo started: 000000000000000000000000000");
      
-        RequestDispatcher dispatcher = request.getRequestDispatcher("InitializeDatabase.jsp");
+        
+        List<User> userList=userDAO.listAllUser();
+        List<User> bigInfluencers=rootDAO.listBigInfluencers();
+        List<User> bigWhales=rootDAO.listBigWhales();
+        List<User> frequentBuyers=rootDAO.listFrequentBuyers();
+        List<User> goodFollowers=rootDAO.listGoodFollowers();
+        List<User> diamondHands=rootDAO.listDiamondHands();
+        List<User> paperHands=rootDAO.listPaperHands();
+        List<User> goodInfluencers=rootDAO.listGoodInfluencers();
+        request.setAttribute("listUser", userList);
+        request.setAttribute("bigInfluencers",bigInfluencers);
+        request.setAttribute("bigWhales", bigWhales);
+        request.setAttribute("frequentBuyers", frequentBuyers); 
+        request.setAttribute("goodFollowers",goodFollowers);
+        request.setAttribute("diamondHands", diamondHands);
+        request.setAttribute("paperHands", paperHands);
+        request.setAttribute("goodInfluencers", goodInfluencers);
+        
+        RequestDispatcher dispatcher = request.getRequestDispatcher("rootInfo.jsp");
         dispatcher.forward(request, response);
-        System.out.println("The user sees the InitializeDatabase page now.");
+        System.out.println("The user sees the rootInfo page now.");
      
-        System.out.println("showInitializeDatabase finished: 1111111111111111111111111111111");
+        System.out.println("showRootInfo finished: 1111111111111111111111111111111");
+    }
+    
+    private void listCommonFollowers(HttpServletRequest request, HttpServletResponse response)
+            throws SQLException, IOException, ServletException {
+        System.out.println("listCommonFollower started: 00000000000000000000000000000000000");
+        
+        String followerX=request.getParameter("followerX");
+        String followerY=request.getParameter("followerY");
+        List<User> commonFollowers = rootDAO.listCommonFollowers(followerX, followerY);
+        request.setAttribute("commonFollowers", commonFollowers); 
+        RequestDispatcher dispatcher = request.getRequestDispatcher("rootInfo.jsp");       
+        dispatcher.forward(request, response);
+
+        System.out.println("listCommonFollower finished: 111111111111111111111111111111111111");
+    }
+    
+    private void listInactiveUsers(HttpServletRequest request, HttpServletResponse response)
+            throws SQLException, IOException, ServletException {
+        System.out.println("listInactiveUsers started: 00000000000000000000000000000000000");
+        int year=Integer.parseInt(request.getParameter("year"));
+        int month=Integer.parseInt(request.getParameter("month"));
+        int day=Integer.parseInt(request.getParameter("day"));
+        List<User> inactiveUsers = rootDAO.listInactiveUsers(year,month,day);
+        request.setAttribute("inactiveUsers", inactiveUsers); 
+        RequestDispatcher dispatcher = request.getRequestDispatcher("rootInfo.jsp");       
+        dispatcher.forward(request, response);
+
+        System.out.println("listCommonFollower finished: 111111111111111111111111111111111111");
+    }
+    
+    private void listStats(HttpServletRequest request, HttpServletResponse response)
+            throws SQLException, IOException, ServletException {
+        System.out.println("listCommonFollower started: 00000000000000000000000000000000000");
+        
+        String username=request.getParameter("username");
+        List<User> stats = rootDAO.listUserStats(username);
+        request.setAttribute("userStats", stats); 
+        RequestDispatcher dispatcher = request.getRequestDispatcher("rootInfo.jsp");       
+        dispatcher.forward(request, response);
+
+        System.out.println("listCommonFollower finished: 111111111111111111111111111111111111");
+    }
+    
+    private void showRootLogin(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        System.out.println("showRootLogin started: 000000000000000000000000000");
+     
+        RequestDispatcher dispatcher = request.getRequestDispatcher("rootLogin.jsp");
+        dispatcher.forward(request, response);
+        System.out.println("The user sees the rootLogin page now.");
+     
+        System.out.println("showRootLogin finished: 1111111111111111111111111111111");
     }
     
     private void showRegister(HttpServletRequest request, HttpServletResponse response)
@@ -313,14 +397,19 @@ public class ControlServlet extends HttpServlet {
         System.out.println("showEditForm finished: 1111111111111111111111111111");
     }
  
-    private boolean rootLogin(HttpServletRequest request, HttpServletResponse response)
+    private void rootLogin(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, ServletException, IOException {
     	String username=request.getParameter("username");
     	String password=request.getParameter("password");
     	root ROOT=new root();
     	root attempt=new root(username,password);
     	System.out.println("ROOT: "+ROOT.username+" "+ROOT.password+" ; Attempt: "+attempt.username+" "+attempt.password);
-    	return rootDAO.isRoot(ROOT,attempt);
+    	if(rootDAO.isRoot(ROOT,attempt)) {
+    		showRootInfo(request,response);
+    	}
+    	else {
+    		response.sendRedirect("showRootLogin");
+    	}
     }
     
     // after the data of a people are inserted, this method will be called to insert the new people into the DB
@@ -429,7 +518,6 @@ public class ControlServlet extends HttpServlet {
 	    else{
 	    	System.out.println("tipping pps");
 	    	userDAO.tipPPS(username,followeeID, amount);
-	    	
 	    }
 
 	    
@@ -473,9 +561,16 @@ public class ControlServlet extends HttpServlet {
 
     	String followerID = (String) request.getSession().getAttribute("username");
     	String followeeID= request.getParameter("followeeID");
-    	System.out.println(followeeID);
-    	followDAO.follow(followeeID, followerID);
-    	response.sendRedirect("listUsers");
+    	
+    	if(followerID.equals(followeeID)) {
+    		response.sendRedirect("listUsers");
+    	}
+    	else {
+    		System.out.println(followeeID);
+    		followDAO.follow(followeeID, followerID);
+    		response.sendRedirect("listUsers");
+    	}
+    	
     	
         System.out.println("follow finished: 1111111111111111111111111111111");
 

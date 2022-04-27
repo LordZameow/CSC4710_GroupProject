@@ -17,6 +17,16 @@ public User(String userName,String password) {
 	this.password = password;
 }
 
+public User(String userName) {
+	this.userName=userName;
+	this.age=0;
+	this.firstName="";
+	this.lastName="";
+	this.password="";
+	this.dollarBal=0;
+	this.ppsBal=0;
+}
+
 public User(String userName,String password, String firstName, String lastName,int age) {
 
 	this.userName = userName;
@@ -37,6 +47,15 @@ public User(String userName,String password, String firstName, String lastName,i
 	this.age = age;
 	this.dollarBal = dollarBal;
 	this.ppsBal = ppsBal;
+}
+
+public User(String userName,String password, String firstName, String lastName,int age,String waste) {
+
+	this.userName = userName;
+	this.password = password;
+	this.firstName = firstName;
+	this.lastName = lastName;
+	this.age = age;
 }
 
 public int getAge() {
